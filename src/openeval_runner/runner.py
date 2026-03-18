@@ -16,7 +16,7 @@
 
 import time
 
-from openeval_runner import converter, dora_runner, job_client
+from openeval_runner import converter, evaluator, job_client
 
 POLL_INTERVAL = 3
 
@@ -26,8 +26,8 @@ def run_job(job):
     # TODO
     print("DEBUG: job start.")
 
-    dora_runner.run_eval(job)
-    dora_runner.run_reset(job)
+    evaluator.run_eval(job)
+    evaluator.run_reset(job)
 
     rrd_path = converter.convert(job)
     job_client.upload_rrd(job, rrd_path)
