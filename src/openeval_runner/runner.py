@@ -26,8 +26,8 @@ def run_job(job):
     # TODO
     print("DEBUG: job start.")
 
-    evaluator.run_eval(job)
-    evaluator.run_reset(job)
+    evaluator.evaluate(job)
+    evaluator.reset(job)
 
     rrd_path = converter.convert(job)
     job_client.upload_rrd(job, rrd_path)
