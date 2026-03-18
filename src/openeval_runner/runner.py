@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""OpenEval Runner daemon: poll for jobs and executes them."""
+"""Evaluates queued jobs in an OpenArm Cell as a daemon."""
 
 import time
 
