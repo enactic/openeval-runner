@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Run eval and reset dataflows."""
+"""Evaluate a policy server."""
 
 
 def evaluate(job):
