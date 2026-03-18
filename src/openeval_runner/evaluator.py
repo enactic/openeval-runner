@@ -15,13 +15,13 @@
 """Run eval and reset dataflows."""
 
 
-def run_eval(job):
-    """Run dora for eval."""
+def evaluate(job):
+    """Evaluate a policy server."""
     # TODO
-    print("DEBUG: run_eval start.")
+    print("DEBUG: evaluate start.")
 
 
-def run_reset(job):
-    """Run dora for reset."""
+def reset(job):
+    """Reset the evaluation environment."""
     # TODO
-    print("DEBUG: run_reset start.")
+    print("DEBUG: reset start.")
