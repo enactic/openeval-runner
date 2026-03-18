@@ -17,8 +17,7 @@
 import time
 
 from openeval_runner import converter, evaluator, job_client
-
-POLL_INTERVAL = 3
+from openeval_runner.config import logger, POLL_INTERVAL
 
 
 def run_job(job):
@@ -38,7 +37,7 @@ def run_job(job):
 def main():
     """Poll for jobs and executes them."""
     # TODO
-    print("DEBUG: daemon start.")
+    logger.info("started (poll_interval=%ds)", POLL_INTERVAL)
     while True:
         job = job_client.fetch_next()
         if job is None:
