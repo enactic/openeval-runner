@@ -21,7 +21,9 @@ license = { text = "Apache-2.0" }
 readme = "README.md"
 requires-python = ">=3.11"
 
-dependencies = []
+dependencies = [
+    "dora-rs-cli>=0.4.1",
+]
 
 [dependency-groups]
 dev = [
