@@ -22,6 +22,7 @@ import os
 # --------------------------------------------------
 
 POLL_INTERVAL = int(os.getenv("POLL_INTERVAL", "3"))  # seconds
+RECORDER_BASE_DIRECTORY = os.getenv("RECORDER_BASE_DIRECTORY", "/tmp")
 
 
 # --------------------------------------------------

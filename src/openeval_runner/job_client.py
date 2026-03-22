@@ -25,6 +25,7 @@ def fetch_next():
         return None
     else:
         return {
+            "id": "dummy_job_id",
             "task.reset_docker_tag": "reset",
             "job.docker_tag": "eval",
         }
