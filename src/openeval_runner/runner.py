@@ -31,6 +31,8 @@ def run_job(job):
     rrd_path = converter.convert(job)
     job_client.upload_rrd(job, rrd_path)
 
+    # TODO: add arm stop using openarm_driver.
+
     print("DEBUG: job end.")
 
 
