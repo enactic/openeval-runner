@@ -14,7 +14,7 @@
 
 nodes:
   - id: controller
-    build: pip install dora-openarm-inference-controller
+    build: pip install nodes/dora-openarm-inference-controller
     path: dora-openarm-inference-controller
     env:
       # Test settings: keep the dataflow running for a few seconds.
@@ -50,7 +50,7 @@ nodes:
       - phase_classifier_result
 
   - id: quittable-tick-arm
-    build: pip install dora-openarm-quitter
+    build: pip install nodes/dora-openarm-quitter
     path: dora-openarm-quitter
     inputs:
       command: controller/command
@@ -60,7 +60,7 @@ nodes:
       - tick
 
   - id: quittable-tick-camera
-    build: pip install dora-openarm-quitter
+    build: pip install nodes/dora-openarm-quitter
     path: dora-openarm-quitter
     inputs:
       command: controller/command
@@ -70,7 +70,7 @@ nodes:
       - tick
 
   - id: quittable-tick-observer
-    build: pip install dora-openarm-quitter
+    build: pip install nodes/dora-openarm-quitter
     path: dora-openarm-quitter
     inputs:
       command: controller/command
@@ -81,7 +81,7 @@ nodes:
 
   - id: arm-right
     # DUMMY
-    build: pip install dora-openarm-dummy
+    build: pip install nodes/dora-openarm-dummy
     path: dora-openarm-dummy
     inputs:
       request_position: quittable-tick-arm/tick
@@ -92,7 +92,7 @@ nodes:
 
   - id: camera-wrist-right
     # DUMMY
-    build: pip install dora-openarm-dummy-camera
+    build: pip install nodes/dora-openarm-dummy-camera
     path: dora-openarm-dummy-camera
     env:
       ENCODING: "jpeg"
@@ -106,7 +106,7 @@ nodes:
 
   - id: arm-left
     # DUMMY
-    build: pip install dora-openarm-dummy
+    build: pip install nodes/dora-openarm-dummy
     path: dora-openarm-dummy
     inputs:
       request_position: quittable-tick-arm/tick
@@ -117,7 +117,7 @@ nodes:
 
   - id: camera-wrist-left
     # DUMMY
-    build: pip install dora-openarm-dummy-camera
+    build: pip install nodes/dora-openarm-dummy-camera
     path: dora-openarm-dummy-camera
     env:
       ENCODING: "jpeg"
@@ -131,7 +131,7 @@ nodes:
 
   - id: camera-head
     # DUMMY
-    build: pip install dora-openarm-dummy-camera
+    build: pip install nodes/dora-openarm-dummy-camera
     path: dora-openarm-dummy-camera
     env:
       ENCODING: "jpeg"
@@ -145,7 +145,7 @@ nodes:
 
   - id: camera-ceiling
     # DUMMY
-    build: pip install dora-openarm-dummy-camera
+    build: pip install nodes/dora-openarm-dummy-camera
     path: dora-openarm-dummy-camera
     env:
       ENCODING: "jpeg"
@@ -158,7 +158,7 @@ nodes:
       - image
 
   - id: observer
-    build: pip install dora-openarm-observer
+    build: pip install nodes/dora-openarm-observer
     path: dora-openarm-observer
     inputs:
       tick: quittable-tick-observer/tick
@@ -167,14 +167,15 @@ nodes:
       camera_wrist_right: camera-wrist-right/image
       arm_left: arm-left/position
       camera_wrist_left: camera-wrist-left/image
-      camera_head: camera-head/image
+      camera_head_left: camera-head/image
+      camera_head_right: camera-head/image
       camera_ceiling: camera-ceiling/image
       phase_classifier_result: phase-classifier/result
     outputs:
       - observation
 
   - id: quittable-observer
-    build: pip install dora-openarm-quitter
+    build: pip install nodes/dora-openarm-quitter
     path: dora-openarm-quitter
     inputs:
       command: controller/command
@@ -184,7 +185,7 @@ nodes:
 
   - id: policy-server
     # DUMMY
-    build: pip install dora-openarm-dummy-policy-server
+    build: pip install nodes/dora-openarm-dummy-policy-server
     path: dora-openarm-dummy-policy-server
     inputs:
       observation: quittable-observer/observation
@@ -192,7 +193,7 @@ nodes:
       - actions
 
   - id: actions-executor
-    build: pip install dora-openarm-actions-executor
+    build: pip install nodes/dora-openarm-actions-executor
     path: dora-openarm-actions-executor
     inputs:
       actions: policy-server/actions
@@ -202,7 +203,7 @@ nodes:
 
   - id: phase-classifier
     # DUMMY
-    build: pip install dora-openarm-dummy-classifier
+    build: pip install nodes/dora-openarm-dummy-classifier
     path: dora-openarm-dummy-classifier
     inputs:
       observation: controller/observation
@@ -211,7 +212,7 @@ nodes:
 
   - id: recorder
     # Run `dora run tests/dataflow.yaml` to create `tests/dataset/` and `tests/out/`.
-    build: pip install dora-openarm-dataset-recorder
+    build: pip install nodes/dora-openarm-dataset-recorder
     path: dora-openarm-dataset-recorder
     inputs:
       command:

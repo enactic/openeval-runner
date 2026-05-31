@@ -1,0 +1,27 @@
+[submodule "tests/nodes/dora-openarm-inference-controller"]
+	path = tests/nodes/dora-openarm-inference-controller
+	url = https://github.com/enactic/dora-openarm-inference-controller
+[submodule "tests/nodes/dora-openarm-quitter"]
+	path = tests/nodes/dora-openarm-quitter
+	url = https://github.com/enactic/dora-openarm-quitter
+[submodule "tests/nodes/dora-openarm-dummy"]
+	path = tests/nodes/dora-openarm-dummy
+	url = https://github.com/enactic/dora-openarm-dummy
+[submodule "tests/nodes/dora-openarm-dummy-camera"]
+	path = tests/nodes/dora-openarm-dummy-camera
+	url = https://github.com/enactic/dora-openarm-dummy-camera
+[submodule "tests/nodes/dora-openarm-observer"]
+	path = tests/nodes/dora-openarm-observer
+	url = https://github.com/enactic/dora-openarm-observer
+[submodule "tests/nodes/dora-openarm-actions-executor"]
+	path = tests/nodes/dora-openarm-actions-executor
+	url = https://github.com/enactic/dora-openarm-actions-executor
+[submodule "tests/nodes/dora-openarm-dummy-policy-server"]
+	path = tests/nodes/dora-openarm-dummy-policy-server
+	url = https://github.com/enactic/dora-openarm-dummy-policy-server
+[submodule "tests/nodes/dora-openarm-dummy-classifier"]
+	path = tests/nodes/dora-openarm-dummy-classifier
+	url = https://github.com/enactic/dora-openarm-dummy-classifier
+[submodule "tests/nodes/dora-openarm-dataset-recorder"]
+	path = tests/nodes/dora-openarm-dataset-recorder
+	url = https://github.com/enactic/dora-openarm-dataset-recorder
