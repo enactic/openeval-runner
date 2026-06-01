@@ -12,32 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-[project]
-name = "openeval-runner"
-version = "0.1.0"
-authors = [{ name = "Enactic, Inc." }]
-description = "Evaluate submitted policy servers in OpenArm Cell automatically."
-license = { text = "Apache-2.0" }
-readme = "README.md"
-requires-python = ">=3.11"
-
-dependencies = [
-    "dora-rs==0.5.0",
-    "dora-rs-cli==0.5.0",
-]
-
-[dependency-groups]
-dev = [
-    "pytest>=9.0.3",
-    "ruff>=0.15.6",
-]
-
-[tool.pytest.ini_options]
-norecursedirs = ["tests/nodes"]
-pythonpath = ["src"]
-
-[tool.ruff.lint]
-extend-select = [
-  "D",   # pydocstyle
-  "UP"
-]
+name: Test
+on:
+  push:
+  pull_request:
+concurrency:
+  group: ${{ github.head_ref || github.sha }}-${{ github.workflow }}
+  cancel-in-progress: true
+jobs:
+  test:
+    name: pytest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+      - uses: astral-sh/setup-uv@v8.1.0
+      - name: Run tests
+        run: uv run pytest tests/
