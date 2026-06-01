@@ -12,32 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-[project]
-name = "openeval-runner"
-version = "0.1.0"
-authors = [{ name = "Enactic, Inc." }]
-description = "Evaluate submitted policy servers in OpenArm Cell automatically."
-license = { text = "Apache-2.0" }
-readme = "README.md"
-requires-python = ">=3.11"
+"""pytest configuration."""
 
-dependencies = [
-    "dora-rs==0.5.0",
-    "dora-rs-cli==0.5.0",
-]
+import subprocess
+from pathlib import Path
 
-[dependency-groups]
-dev = [
-    "pytest>=9.0.3",
-    "ruff>=0.15.6",
-]
+import pytest
 
-[tool.pytest.ini_options]
-norecursedirs = ["tests/nodes"]
-pythonpath = ["src"]
+TESTS_DIR = Path(__file__).parent
 
-[tool.ruff.lint]
-extend-select = [
-  "D",   # pydocstyle
-  "UP"
-]
+
+@pytest.fixture(scope="session", autouse=True)
+def build_dataflow():
+    """Build the test dataflow before running tests."""
+    subprocess.run(
+        ["dora", "build", str(TESTS_DIR / "dataflow.yaml"), "--uv"],
+        check=True,
+    )
