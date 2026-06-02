@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     )
 
     POLL_INTERVAL: int = 3
-    RECORDER_BASE_DIRECTORY: str = "/tmp"
+    RECORDER_BASE_DIRECTORY: str = "tmp"
     DATAFLOW_FILE: str = "dataflow.yaml"
 
 
