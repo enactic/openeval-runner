@@ -15,15 +15,25 @@
 """Configuration globals and logging setup."""
 
 import logging
-import os
 
-# --------------------------------------------------
-# Daemon
-# --------------------------------------------------
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
-POLL_INTERVAL = int(os.getenv("POLL_INTERVAL", "3"))  # seconds
-RECORDER_BASE_DIRECTORY = os.getenv("RECORDER_BASE_DIRECTORY", "/tmp")
-DATAFLOW_FILE = os.getenv("DATAFLOW_FILE", "dataflow.yaml")
+
+class Settings(BaseSettings):
+    """Runner settings loaded from environment variables."""
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_ignore_empty=True,
+        extra="ignore",
+    )
+
+    POLL_INTERVAL: int = 3
+    RECORDER_BASE_DIRECTORY: str = "/tmp"
+    DATAFLOW_FILE: str = "dataflow.yaml"
+
+
+settings = Settings()
 
 
 # --------------------------------------------------
