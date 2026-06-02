@@ -19,7 +19,7 @@ import signal
 import subprocess
 import time
 
-from openeval_runner.config import logger, DATAFLOW_FILE, RECORDER_BASE_DIRECTORY
+from openeval_runner.config import logger, settings
 
 NODE_NAME_PATTERN = "dora-openarm|opencv-video-capture"
 
@@ -83,7 +83,7 @@ def _kill_orphaned_workers():
 
 
 def _run(phase, job, env, timeout):
-    cmd = ["dora", "run", DATAFLOW_FILE, "--uv"]
+    cmd = ["dora", "run", settings.DATAFLOW_FILE, "--uv"]
     logger.info("[job=%s] %s: %s", job["id"], phase, " ".join(cmd))
 
     proc = None
@@ -112,7 +112,7 @@ def evaluate(job):
 
     env = os.environ.copy() | {
         "IMAGE": job["job.docker_tag"],
-        "DIRECTORY": RECORDER_BASE_DIRECTORY,
+        "DIRECTORY": settings.RECORDER_BASE_DIRECTORY,
         "NAME": f"evaluate-{job['id']}",
         "TIMEOUT": str(timeout),
     }
@@ -126,7 +126,7 @@ def reset(job):
 
     env = os.environ.copy() | {
         "IMAGE": job["task.reset_docker_tag"],
-        "DIRECTORY": RECORDER_BASE_DIRECTORY,
+        "DIRECTORY": settings.RECORDER_BASE_DIRECTORY,
         "NAME": f"reset-{job['id']}",
         "TIMEOUT": str(timeout),
     }

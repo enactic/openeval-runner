@@ -17,7 +17,7 @@
 import time
 
 from openeval_runner import converter, evaluator, job_client
-from openeval_runner.config import logger, POLL_INTERVAL
+from openeval_runner.config import logger, settings
 
 
 def run_job(job):
@@ -39,12 +39,12 @@ def run_job(job):
 def main():
     """Poll for jobs and executes them."""
     # TODO
-    logger.info("started (poll_interval=%ds)", POLL_INTERVAL)
+    logger.info("started (poll_interval=%ds)", settings.POLL_INTERVAL)
     while True:
         job = job_client.fetch_next()
         if job is None:
             print("waiting")
-            time.sleep(POLL_INTERVAL)
+            time.sleep(settings.POLL_INTERVAL)
             continue
 
         run_job(job)
