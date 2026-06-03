@@ -14,10 +14,14 @@
 
 """pytest configuration."""
 
+import os
 import subprocess
 from pathlib import Path
 
 import pytest
+
+os.environ.setdefault("OPENEVAL_API_KEY", "test-api-key")
+os.environ.setdefault("OPENEVAL_TASK_ID", "1")
 
 TESTS_DIR = Path(__file__).parent
 
