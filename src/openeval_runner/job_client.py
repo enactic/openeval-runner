@@ -14,24 +14,55 @@
 
 """Job server client: fetch job and upload `.rrd` file."""
 
-import random
+import requests
+
+from openeval_runner.config import settings
+
+API_TIMEOUT = 10
+HEADERS = {
+    "X-API-KEY": settings.OPENEVAL_API_KEY,
+}
 
 
 def fetch_next():
     """Fetch job from the job server."""
-    # TODO
-    # Dummy implementation.
-    if random.random() > 0.5:
-        return None
-    else:
-        return {
-            "id": "dummy_job_id",
-            "task.reset_docker_tag": "reset",
-            "job.docker_tag": "eval",
-        }
+    url = f"{settings.OPENEVAL_API_URL}/api/v1/tasks/{settings.OPENEVAL_TASK_ID}/jobs/claim"
+    response = requests.post(url, headers=HEADERS, timeout=API_TIMEOUT)
+    response.raise_for_status()
+    return response.json()
 
 
-def upload_rrd(job, path):
+def complete_job(job_id, success, s3_key):
+    """Report job completion to the job server."""
+    url = f"{settings.OPENEVAL_API_URL}/api/v1/jobs/{job_id}/complete"
+    response = requests.post(
+        url,
+        json={"success": success, "s3_key": s3_key},
+        headers=HEADERS,
+        timeout=API_TIMEOUT,
+    )
+    response.raise_for_status()
+    return response.json()
+
+
+def fail_job(job_id, reason):
+    """Report job failure to the job server."""
+    url = f"{settings.OPENEVAL_API_URL}/api/v1/jobs/{job_id}/fail"
+    response = requests.post(
+        url, json={"reason": reason}, headers=HEADERS, timeout=API_TIMEOUT
+    )
+    response.raise_for_status()
+    return response.json()
+
+
+def upload_rrd(path):
     """Upload `.rrd` file to the job server."""
-    # TODO
-    print("DEBUG: upload rrd file")
+    url = f"{settings.OPENEVAL_API_URL}/api/v1/rrd/upload-url"
+    response = requests.get(url, headers=HEADERS, timeout=API_TIMEOUT)
+    response.raise_for_status()
+    upload_info = response.json()
+
+    with open(path, "rb") as f:
+        requests.put(upload_info["url"], data=f, timeout=300).raise_for_status()
+
+    return upload_info["s3_key"]

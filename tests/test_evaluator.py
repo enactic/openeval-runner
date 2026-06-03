@@ -26,5 +26,5 @@ from openeval_runner.evaluator import evaluate  # noqa: E402
 
 def test_run(capfd):
     """evaluate() completes successfully."""
-    job = {"id": "test_job", "job.docker_tag": "dummy"}
+    job = {"job_id": 1, "job.docker_tag": "dummy"}
     assert evaluate(job)

@@ -22,31 +22,32 @@ from openeval_runner.config import logger, settings
 
 def run_job(job):
     """Execute a single job."""
-    # TODO
-    print("DEBUG: job start.")
+    logger.debug("[job=%s] started", job["job_id"])
 
-    evaluator.evaluate(job)
-    evaluator.reset(job)
+    try:
+        success = evaluator.evaluate(job)
+        evaluator.reset(job)
 
-    rrd_path = converter.convert(job)
-    job_client.upload_rrd(job, rrd_path)
+        rrd_path = converter.convert(job)
+        s3_key = job_client.upload_rrd(rrd_path)
+        job_client.complete_job(job["job_id"], success, s3_key)
+
+        logger.debug("[job=%s] completed", job["job_id"])
+    except Exception as err:
+        logger.exception("[job=%s] failed", job["job_id"])
+        job_client.fail_job(job["job_id"], str(err))
 
     # TODO: add arm stop using openarm_driver.
-
-    print("DEBUG: job end.")
 
 
 def main():
     """Poll for jobs and executes them."""
-    # TODO
     logger.info("started (poll_interval=%ds)", settings.POLL_INTERVAL)
     while True:
         job = job_client.fetch_next()
         if job is None:
-            print("waiting")
             time.sleep(settings.POLL_INTERVAL)
             continue
-
         run_job(job)
 
 

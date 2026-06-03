@@ -31,6 +31,10 @@ class Settings(BaseSettings):
     RECORDER_BASE_DIRECTORY: str = "tmp"
     DATAFLOW_FILE: str = "dataflow.yaml"
 
+    OPENEVAL_API_URL: str = "http://localhost:8000"
+    OPENEVAL_API_KEY: str
+    OPENEVAL_TASK_ID: int
+
 
 settings = Settings()
 

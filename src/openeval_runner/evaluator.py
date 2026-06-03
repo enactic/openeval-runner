@@ -84,24 +84,24 @@ def _kill_orphaned_workers():
 
 def _run(phase, job, env, timeout):
     cmd = ["dora", "run", settings.DATAFLOW_FILE, "--uv"]
-    logger.info("[job=%s] %s: %s", job["id"], phase, " ".join(cmd))
+    logger.info("[job=%s] %s: %s", job["job_id"], phase, " ".join(cmd))
 
     proc = None
     try:
         proc = subprocess.Popen(cmd, env=env, start_new_session=True)
         returncode = proc.wait(timeout=timeout)
     except subprocess.TimeoutExpired:
-        logger.warning("[job=%s] %s timed out after %ds", job["id"], phase, timeout)
+        logger.warning("[job=%s] %s timed out after %ds", job["job_id"], phase, timeout)
         return False
     except (OSError, subprocess.SubprocessError):
-        logger.exception("[job=%s] %s: failed to run dora", job["id"], phase)
+        logger.exception("[job=%s] %s: failed to run dora", job["job_id"], phase)
         return False
     finally:
         if proc is not None:
             _kill_process(proc)
         _kill_orphaned_workers()
 
-    logger.info("[job=%s] %s finished: returncode=%d", job["id"], phase, returncode)
+    logger.info("[job=%s] %s finished: returncode=%d", job["job_id"], phase, returncode)
     return returncode == 0
 
 
@@ -113,7 +113,7 @@ def evaluate(job):
     env = os.environ.copy() | {
         "IMAGE": job["job.docker_tag"],
         "DIRECTORY": settings.RECORDER_BASE_DIRECTORY,
-        "NAME": f"evaluate-{job['id']}",
+        "NAME": f"evaluate-{job['job_id']}",
         "TIMEOUT": str(timeout),
     }
     return _run("evaluate", job, env, timeout=timeout)
@@ -127,7 +127,7 @@ def reset(job):
     env = os.environ.copy() | {
         "IMAGE": job["task.reset_docker_tag"],
         "DIRECTORY": settings.RECORDER_BASE_DIRECTORY,
-        "NAME": f"reset-{job['id']}",
+        "NAME": f"reset-{job['job_id']}",
         "TIMEOUT": str(timeout),
     }
     return _run("reset", job, env, timeout=timeout)
