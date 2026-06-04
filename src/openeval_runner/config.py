@@ -16,6 +16,7 @@
 
 import logging
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -28,6 +29,9 @@ class Settings(BaseSettings):
     )
 
     POLL_INTERVAL: int = 3
+    EVALUATE_TIMEOUT: int = Field(default=180, gt=0)
+    RESET_TIMEOUT: int = Field(default=120, gt=0)
+
     RECORDER_BASE_DIRECTORY: str = "tmp"
     DATAFLOW_FILE: str = "dataflow.yaml"
 
