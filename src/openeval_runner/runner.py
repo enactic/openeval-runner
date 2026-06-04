@@ -16,8 +16,18 @@
 
 import time
 
+import openarm_driver
+
 from openeval_runner import converter, evaluator, job_client
 from openeval_runner.config import logger, settings
+
+
+def _stop_arms():
+    for side in ("left_arm", "right_arm"):
+        try:
+            openarm_driver.SingleArmDriver(side).stop()
+        except Exception:
+            logger.exception("[arm=%s] stop failed", side)
 
 
 def run_job(job):
@@ -25,8 +35,11 @@ def run_job(job):
     logger.debug("[job=%s] started", job["job_id"])
 
     try:
-        success = evaluator.evaluate(job)
-        evaluator.reset(job)
+        try:
+            success = evaluator.evaluate(job)
+            evaluator.reset(job)
+        finally:
+            _stop_arms()
 
         rrd_path = converter.convert(job)
         s3_key = job_client.upload_rrd(rrd_path)
@@ -36,8 +49,6 @@ def run_job(job):
     except Exception as err:
         logger.exception("[job=%s] failed", job["job_id"])
         job_client.fail_job(job["job_id"], str(err))
-
-    # TODO: add arm stop using openarm_driver.
 
 
 def main():

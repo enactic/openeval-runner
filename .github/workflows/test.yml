@@ -28,5 +28,10 @@ jobs:
         with:
           submodules: recursive
       - uses: astral-sh/setup-uv@v8.2.0
+      - name: Install dependencies
+        run: |
+          sudo add-apt-repository -y ppa:openarm/main
+          sudo apt-get update
+          sudo apt-get install -y -V libopenarm-can-dev
       - name: Run tests
         run: uv run pytest tests/
