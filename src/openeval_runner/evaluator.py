@@ -23,6 +23,11 @@ from openeval_runner.config import logger, settings
 
 NODE_NAME_PATTERN = "dora-openarm|opencv-video-capture"
 
+# The dora-openarm-docker-policy-server node can be especially slow to start,
+# so we add this as overhead to the timeout.
+# We use 60 seconds for now, but a better value may exist.
+DORA_OVERHEAD_WAIT = 60
+
 
 def _kill(pgid, sig, fallback):
     try:
@@ -87,11 +92,19 @@ def _run(phase, job, env, timeout):
     logger.info("[job=%s] %s: %s", job["job_id"], phase, " ".join(cmd))
 
     proc = None
+    wait_timeout = timeout + DORA_OVERHEAD_WAIT
     try:
         proc = subprocess.Popen(cmd, env=env, start_new_session=True)
-        returncode = proc.wait(timeout=timeout)
+        returncode = proc.wait(timeout=wait_timeout)
     except subprocess.TimeoutExpired:
-        logger.warning("[job=%s] %s timed out after %ds", job["job_id"], phase, timeout)
+        logger.warning(
+            "[job=%s] %s timed out after %ds (timeout=%ds + overhead=%ds)",
+            job["job_id"],
+            phase,
+            wait_timeout,
+            timeout,
+            DORA_OVERHEAD_WAIT,
+        )
         return False
     except (OSError, subprocess.SubprocessError):
         logger.exception("[job=%s] %s: failed to run dora", job["job_id"], phase)
@@ -107,9 +120,7 @@ def _run(phase, job, env, timeout):
 
 def evaluate(job):
     """Evaluate a policy server."""
-    # TODO: optimal timeout
-    timeout = 90
-
+    timeout = settings.EVALUATE_TIMEOUT
     env = os.environ.copy() | {
         "IMAGE": job["job.docker_tag"],
         "DIRECTORY": settings.RECORDER_BASE_DIRECTORY,
@@ -121,9 +132,7 @@ def evaluate(job):
 
 def reset(job):
     """Reset the evaluation environment."""
-    # TODO: optimal timeout
-    timeout = 90
-
+    timeout = settings.RESET_TIMEOUT
     env = os.environ.copy() | {
         "IMAGE": job["task.reset_docker_tag"],
         "DIRECTORY": settings.RECORDER_BASE_DIRECTORY,
