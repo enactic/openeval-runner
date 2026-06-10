@@ -34,6 +34,7 @@ class Settings(BaseSettings):
 
     RECORDER_BASE_DIRECTORY: str = "tmp"
     DATAFLOW_FILE: str = "dataflow.yaml"
+    RRD_FPS: int = Field(default=30, gt=0)
 
     OPENEVAL_API_URL: str = "http://localhost:8000"
     OPENEVAL_API_KEY: str

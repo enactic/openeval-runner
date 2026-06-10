@@ -214,6 +214,8 @@ nodes:
     # Run `dora run tests/dataflow.yaml` to create `tests/dataset/` and `tests/out/`.
     build: pip install nodes/dora-openarm-dataset-recorder
     path: dora-openarm-dataset-recorder
+    env:
+      METADATA_FILE: metadata.yaml
     inputs:
       command:
         source: controller/command

@@ -12,20 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Tests for evaluator."""
+"""Tests for converter."""
 
 from pathlib import Path
 
+from openeval_runner import converter
 from openeval_runner.config import settings
 from openeval_runner.evaluator import evaluate
 
 TESTS_DIR = Path(__file__).parent
 
 
-def test_run(capfd, tmp_path, monkeypatch):
-    """evaluate() completes successfully."""
+def test_convert_generates_rrd(capfd, tmp_path, monkeypatch):
+    """convert() writes it out as an .rrd file."""
     monkeypatch.setattr(settings, "DATAFLOW_FILE", str(TESTS_DIR / "dataflow.yaml"))
     monkeypatch.setattr(settings, "RECORDER_BASE_DIRECTORY", str(tmp_path))
 
     job = {"job_id": 1, "job.docker_tag": "dummy"}
     assert evaluate(job)
+
+    rrd_path = converter.convert(job)
+    assert rrd_path == tmp_path / "evaluate-1" / "output.rrd"
+    assert rrd_path.is_file()
