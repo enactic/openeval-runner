@@ -14,8 +14,20 @@
 
 """Convert recorder output to rerun.io `.rrd` format."""
 
+from openarm_dataset import Dataset
+
+from openeval_runner import evaluator
+from openeval_runner.config import logger, settings
+
 
 def convert(job):
     """Convert recorder output to rerun.io `.rrd` format."""
-    # TODO
-    return "/path/to/data.rrd"
+    dataset_dir = evaluator.recording_directory(job, evaluator.EVALUATE_PHASE)
+    if not dataset_dir.is_dir():
+        raise FileNotFoundError(f"Recording directory not found: {dataset_dir}")
+
+    rrd_path = dataset_dir / "output.rrd"
+    logger.debug("[job=%s] converting %s -> %s", job["job_id"], dataset_dir, rrd_path)
+    Dataset(dataset_dir).write(rrd_path, "rrd", fps=settings.RRD_FPS)
+
+    return rrd_path

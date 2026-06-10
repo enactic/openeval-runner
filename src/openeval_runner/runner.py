@@ -15,11 +15,27 @@
 """Evaluates queued jobs in an OpenArm Cell as a daemon."""
 
 import time
+import shutil
 
 import openarm_driver
 
 from openeval_runner import converter, evaluator, job_client
 from openeval_runner.config import logger, settings
+
+
+def _remove_directory(job, directory):
+    if not directory.exists():
+        return
+    logger.debug("[job=%s] removing %s", job["job_id"], directory)
+    try:
+        shutil.rmtree(directory)
+    except Exception:
+        logger.exception("[job=%s] cleanup failed %s", job["job_id"], directory)
+
+
+def _cleanup_recording(job):
+    _remove_directory(job, evaluator.recording_directory(job, evaluator.EVALUATE_PHASE))
+    _remove_directory(job, evaluator.recording_directory(job, evaluator.RESET_PHASE))
 
 
 def _stop_arms():
@@ -49,6 +65,8 @@ def run_job(job):
     except Exception as err:
         logger.exception("[job=%s] failed", job["job_id"])
         job_client.fail_job(job["job_id"], str(err))
+    finally:
+        _cleanup_recording(job)
 
 
 def main():

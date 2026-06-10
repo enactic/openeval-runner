@@ -12,20 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Tests for evaluator."""
+location: Lab
+operator: Tester
 
-from pathlib import Path
+tasks:
+  - prompt: Pick a spoon.
+    description: Pick a spoon on a table.
 
-from openeval_runner.config import settings
-from openeval_runner.evaluator import evaluate
-
-TESTS_DIR = Path(__file__).parent
-
-
-def test_run(capfd, tmp_path, monkeypatch):
-    """evaluate() completes successfully."""
-    monkeypatch.setattr(settings, "DATAFLOW_FILE", str(TESTS_DIR / "dataflow.yaml"))
-    monkeypatch.setattr(settings, "RECORDER_BASE_DIRECTORY", str(tmp_path))
-
-    job = {"job_id": 1, "job.docker_tag": "dummy"}
-    assert evaluate(job)
+equipment:
+  id: Test
+  version: "1.0"
+  embodiments:
+    arms:
+      id: OpenArm
+      version: "2.0"
+  perceptions:
+    cameras:
+      wrist_left: {}
+      wrist_right: {}
+      ceiling: {}
+      head: {}

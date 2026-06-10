@@ -18,6 +18,7 @@ import os
 import signal
 import subprocess
 import time
+from pathlib import Path
 
 from openeval_runner.config import logger, settings
 
@@ -27,6 +28,18 @@ NODE_NAME_PATTERN = "dora-openarm|opencv-video-capture"
 # so we add this as overhead to the timeout.
 # We use 60 seconds for now, but a better value may exist.
 DORA_OVERHEAD_WAIT = 60
+
+EVALUATE_PHASE = "evaluate"
+RESET_PHASE = "reset"
+
+
+def _recording_name(job, phase):
+    return f"{phase}-{job['job_id']}"
+
+
+def recording_directory(job, phase):
+    """Path of the dataset the recorder writes while evaluating/resetting a job."""
+    return Path(settings.RECORDER_BASE_DIRECTORY) / _recording_name(job, phase)
 
 
 def _kill(pgid, sig, fallback):
@@ -124,7 +137,7 @@ def evaluate(job):
     env = os.environ.copy() | {
         "IMAGE": job["job.docker_tag"],
         "DIRECTORY": settings.RECORDER_BASE_DIRECTORY,
-        "NAME": f"evaluate-{job['job_id']}",
+        "NAME": _recording_name(job, EVALUATE_PHASE),
         "TIMEOUT": str(timeout),
     }
     return _run("evaluate", job, env, timeout=timeout)
@@ -136,7 +149,7 @@ def reset(job):
     env = os.environ.copy() | {
         "IMAGE": job["task.reset_docker_tag"],
         "DIRECTORY": settings.RECORDER_BASE_DIRECTORY,
-        "NAME": f"reset-{job['job_id']}",
+        "NAME": _recording_name(job, RESET_PHASE),
         "TIMEOUT": str(timeout),
     }
     return _run("reset", job, env, timeout=timeout)
