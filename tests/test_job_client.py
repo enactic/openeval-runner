@@ -30,8 +30,8 @@ def test_fetch_next_returns_job():
     """fetch_next() returns the job dict."""
     job = {
         "job_id": 1,
-        "job.docker_tag": "image:latest",
-        "task.reset_docker_tag": "reset:latest",
+        "docker_tag": "image:latest",
+        "reset_docker_tag": "reset:latest",
     }
     responses.add(
         responses.POST, f"{API_URL}/api/v1/tasks/{TASK_ID}/jobs/claim", json=job
