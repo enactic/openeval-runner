@@ -135,7 +135,7 @@ def evaluate(job):
     """Evaluate a policy server."""
     timeout = settings.EVALUATE_TIMEOUT
     env = os.environ.copy() | {
-        "IMAGE": job["job.docker_tag"],
+        "IMAGE": job["docker_tag"],
         "DIRECTORY": settings.RECORDER_BASE_DIRECTORY,
         "NAME": _recording_name(job, EVALUATE_PHASE),
         "TIMEOUT": str(timeout),
@@ -147,7 +147,7 @@ def reset(job):
     """Reset the evaluation environment."""
     timeout = settings.RESET_TIMEOUT
     env = os.environ.copy() | {
-        "IMAGE": job["task.reset_docker_tag"],
+        "IMAGE": job["reset_docker_tag"],
         "DIRECTORY": settings.RECORDER_BASE_DIRECTORY,
         "NAME": _recording_name(job, RESET_PHASE),
         "TIMEOUT": str(timeout),
