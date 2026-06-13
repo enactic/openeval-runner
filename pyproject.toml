@@ -24,15 +24,11 @@ requires-python = ">=3.11"
 dependencies = [
     "dora-rs==0.5.0",
     "dora-rs-cli==0.5.0",
-    "openarm-dataset[rerun]",
+    "openarm-dataset[rerun]>=0.2.0",
     "openarm-driver>=0.1.0",
     "pydantic-settings>=2.14.1",
     "requests>=2.34.2",
 ]
-
-[tool.uv.sources]
-# TODO: Once it's released, use the PyPI package.
-openarm-dataset = { git = "https://github.com/enactic/openarm_dataset.git", branch = "main" }
 
 [dependency-groups]
 dev = [
