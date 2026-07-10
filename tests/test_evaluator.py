@@ -17,7 +17,7 @@
 from pathlib import Path
 
 from openeval_runner.config import settings
-from openeval_runner.evaluator import evaluate
+from openeval_runner.evaluator import evaluate, succeeded
 
 TESTS_DIR = Path(__file__).parent
 
@@ -29,3 +29,30 @@ def test_run(capfd, tmp_path, monkeypatch):
 
     job = {"job_id": 1, "docker_tag": "dummy"}
     assert evaluate(job)
+
+
+def test_succeeded_true(monkeypatch):
+    """succeeded() is True on success."""
+    monkeypatch.setattr(
+        settings, "RECORDER_BASE_DIRECTORY", str(TESTS_DIR / "fixtures" / "dataset")
+    )
+    job = {"job_id": 1, "docker_tag": "dummy"}
+    assert succeeded(job)
+
+
+def test_succeeded_false(monkeypatch):
+    """succeeded() is False on failure."""
+    monkeypatch.setattr(
+        settings, "RECORDER_BASE_DIRECTORY", str(TESTS_DIR / "fixtures" / "dataset")
+    )
+    job = {"job_id": 2, "docker_tag": "dummy"}
+    assert not succeeded(job)
+
+
+def test_succeeded_no_episode(monkeypatch):
+    """succeeded() is False with no episode."""
+    monkeypatch.setattr(
+        settings, "RECORDER_BASE_DIRECTORY", str(TESTS_DIR / "fixtures" / "dataset")
+    )
+    job = {"job_id": 3, "docker_tag": "dummy"}
+    assert not succeeded(job)

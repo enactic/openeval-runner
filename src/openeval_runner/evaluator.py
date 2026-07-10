@@ -20,6 +20,8 @@ import subprocess
 import time
 from pathlib import Path
 
+from openarm_dataset import Dataset
+
 from openeval_runner.config import logger, settings
 
 NODE_NAME_PATTERN = "dora-openarm|opencv-video-capture"
@@ -153,3 +155,11 @@ def reset(job):
         "TIMEOUT": str(timeout),
     }
     return _run("reset", job, env, timeout=timeout)
+
+
+def succeeded(job):
+    """Whether the recorded task episode succeeded (per dataset metadata)."""
+    dataset = Dataset(recording_directory(job, EVALUATE_PHASE))
+    if dataset.meta.num_episodes == 0:
+        return False
+    return bool(dataset.meta.episodes[0].get("success", False))

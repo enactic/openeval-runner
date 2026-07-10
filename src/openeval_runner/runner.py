@@ -52,11 +52,12 @@ def run_job(job):
 
     try:
         try:
-            success = evaluator.evaluate(job)
+            evaluator.evaluate(job)
             evaluator.reset(job)
         finally:
             _stop_arms()
 
+        success = evaluator.succeeded(job)
         rrd_path = converter.convert(job)
         s3_key = job_client.upload_rrd(rrd_path)
         job_client.complete_job(job["job_id"], success, s3_key)

@@ -1,0 +1,14 @@
+episodes:
+- id: '0'
+  success: false
+  task_index: 0
+equipment:
+  embodiments: {}
+frequencies:
+  action:
+    arms: {}
+  cameras: {}
+  obs:
+    arms: {}
+operation_type: teleop
+version: 0.3.0
