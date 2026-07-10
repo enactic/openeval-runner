@@ -1,0 +1,10 @@
+equipment:
+  embodiments: {}
+frequencies:
+  action:
+    arms: {}
+  cameras: {}
+  obs:
+    arms: {}
+operation_type: teleop
+version: 0.3.0
