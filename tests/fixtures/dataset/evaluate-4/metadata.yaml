@@ -12,17 +12,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-episodes:
-- id: '0'
-  success: true
-  task_index: 0
-equipment:
-  embodiments: {}
-frequencies:
-  action:
-    arms: {}
-  cameras: {}
-  obs:
-    arms: {}
-operation_type: teleop
-version: 0.3.0
+# empty

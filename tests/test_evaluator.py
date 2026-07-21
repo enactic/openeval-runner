@@ -56,3 +56,21 @@ def test_succeeded_no_episode(monkeypatch):
     )
     job = {"job_id": 3, "docker_tag": "dummy"}
     assert not succeeded(EVALUATE_PHASE, job)
+
+
+def test_succeeded_no_metadata_yaml(monkeypatch):
+    """succeeded() is False when metadata.yaml is empty."""
+    monkeypatch.setattr(
+        settings, "RECORDER_BASE_DIRECTORY", str(TESTS_DIR / "fixtures" / "dataset")
+    )
+    job = {"job_id": 4, "docker_tag": "dummy"}
+    assert not succeeded(EVALUATE_PHASE, job)
+
+
+def test_succeeded_no_dataset_directory(monkeypatch):
+    """succeeded() is False when the recording directory does not exist."""
+    monkeypatch.setattr(
+        settings, "RECORDER_BASE_DIRECTORY", str(TESTS_DIR / "fixtures" / "dataset")
+    )
+    job = {"job_id": 999, "docker_tag": "dummy"}
+    assert not succeeded(EVALUATE_PHASE, job)
