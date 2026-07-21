@@ -159,7 +159,14 @@ def reset(job):
 
 def succeeded(phase, job):
     """Whether the recorded task episode succeeded (per dataset metadata)."""
-    dataset = Dataset(recording_directory(job, phase))
-    if dataset.meta.num_episodes == 0:
+    dataset_directory = recording_directory(job, phase)
+    if not dataset_directory.exists():
         return False
-    return bool(dataset.meta.episodes[0].get("success", False))
+    try:
+        dataset = Dataset(dataset_directory)
+        if dataset.meta.num_episodes == 0:
+            return False
+        return bool(dataset.meta.episodes[0].get("success", False))
+    except Exception:
+        logger.exception("[job=%s] failed to read %s dataset", job["job_id"], phase)
+        return False
