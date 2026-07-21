@@ -17,10 +17,27 @@
 import time
 import shutil
 
+from pathlib import Path
+
 import openarm_driver
 
 from openeval_runner import converter, evaluator, job_client
 from openeval_runner.config import logger, settings
+
+
+def _not_ready_path():
+    return Path(settings.STATE_DIRECTORY) / "not_ready"
+
+
+def _mark_not_ready(job, reason):
+    path = _not_ready_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.touch()
+    logger.warning(
+        "[job=%s] cell not ready: %s; polling paused",
+        job["job_id"],
+        reason,
+    )
 
 
 def _remove_directory(job, directory):
@@ -58,15 +75,13 @@ def run_job(job):
             _stop_arms()
 
         success = evaluator.succeeded(evaluator.EVALUATE_PHASE, job)
+        reset_ok = evaluator.succeeded(evaluator.RESET_PHASE, job)
+        if not reset_ok:
+            _mark_not_ready(job, "reset failed")
+
         rrd_path = converter.convert(job)
         s3_key = job_client.upload_rrd(rrd_path)
         job_client.complete_job(job["job_id"], success, s3_key)
-
-        reset_ok = evaluator.succeeded(evaluator.RESET_PHASE, job)
-        if not reset_ok:
-            # TODO: handle reset failure
-            pass
-
         logger.debug("[job=%s] completed", job["job_id"])
     except Exception as err:
         logger.exception("[job=%s] failed", job["job_id"])
@@ -78,7 +93,20 @@ def run_job(job):
 def main():
     """Poll for jobs and executes them."""
     logger.info("started (poll_interval=%ds)", settings.POLL_INTERVAL)
+    paused = False
     while True:
+        if _not_ready_path().exists():
+            if not paused:
+                logger.warning(
+                    "paused: cell is not ready; remove %s to resume", _not_ready_path()
+                )
+                paused = True
+            time.sleep(settings.POLL_INTERVAL)
+            continue
+        if paused:
+            logger.info("resumed polling")
+            paused = False
+
         job = job_client.fetch_next()
         if job is None:
             time.sleep(settings.POLL_INTERVAL)

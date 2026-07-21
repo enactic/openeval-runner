@@ -33,6 +33,7 @@ class Settings(BaseSettings):
     RESET_TIMEOUT: int = Field(default=120, gt=0)
 
     RECORDER_BASE_DIRECTORY: str = "tmp"
+    STATE_DIRECTORY: str = "state"
     DATAFLOW_FILE: str = "dataflow.yaml"
     RRD_FPS: int = Field(default=30, gt=0)
 
