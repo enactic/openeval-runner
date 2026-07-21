@@ -57,10 +57,15 @@ def run_job(job):
         finally:
             _stop_arms()
 
-        success = evaluator.succeeded(job)
+        success = evaluator.succeeded(evaluator.EVALUATE_PHASE, job)
         rrd_path = converter.convert(job)
         s3_key = job_client.upload_rrd(rrd_path)
         job_client.complete_job(job["job_id"], success, s3_key)
+
+        reset_ok = evaluator.succeeded(evaluator.RESET_PHASE, job)
+        if not reset_ok:
+            # TODO: handle reset failure
+            pass
 
         logger.debug("[job=%s] completed", job["job_id"])
     except Exception as err:

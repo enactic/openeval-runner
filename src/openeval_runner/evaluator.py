@@ -142,7 +142,7 @@ def evaluate(job):
         "NAME": _recording_name(job, EVALUATE_PHASE),
         "TIMEOUT": str(timeout),
     }
-    return _run("evaluate", job, env, timeout=timeout)
+    return _run(EVALUATE_PHASE, job, env, timeout=timeout)
 
 
 def reset(job):
@@ -154,12 +154,12 @@ def reset(job):
         "NAME": _recording_name(job, RESET_PHASE),
         "TIMEOUT": str(timeout),
     }
-    return _run("reset", job, env, timeout=timeout)
+    return _run(RESET_PHASE, job, env, timeout=timeout)
 
 
-def succeeded(job):
+def succeeded(phase, job):
     """Whether the recorded task episode succeeded (per dataset metadata)."""
-    dataset = Dataset(recording_directory(job, EVALUATE_PHASE))
+    dataset = Dataset(recording_directory(job, phase))
     if dataset.meta.num_episodes == 0:
         return False
     return bool(dataset.meta.episodes[0].get("success", False))
