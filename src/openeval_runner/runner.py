@@ -63,21 +63,34 @@ def _stop_arms():
             logger.exception("[arm=%s] stop failed", side)
 
 
+def _run_real(job):
+    try:
+        evaluator.evaluate(job)
+        evaluator.reset(job)
+    finally:
+        _stop_arms()
+
+    reset_ok = evaluator.succeeded(evaluator.RESET_PHASE, job)
+    if not reset_ok:
+        _mark_not_ready(job, "reset failed")
+
+    return evaluator.succeeded(evaluator.EVALUATE_PHASE, job)
+
+
+def _run_simulation(job):
+    evaluator.evaluate(job)
+    return evaluator.succeeded(evaluator.EVALUATE_PHASE, job)
+
+
 def run_job(job):
     """Execute a single job."""
     logger.debug("[job=%s] started", job["job_id"])
 
     try:
-        try:
-            evaluator.evaluate(job)
-            evaluator.reset(job)
-        finally:
-            _stop_arms()
-
-        success = evaluator.succeeded(evaluator.EVALUATE_PHASE, job)
-        reset_ok = evaluator.succeeded(evaluator.RESET_PHASE, job)
-        if not reset_ok:
-            _mark_not_ready(job, "reset failed")
+        if settings.SIMULATION:
+            success = _run_simulation(job)
+        else:
+            success = _run_real(job)
 
         rrd_path = converter.convert(job)
         s3_key = job_client.upload_rrd(rrd_path)

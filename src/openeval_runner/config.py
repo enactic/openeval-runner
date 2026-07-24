@@ -41,6 +41,8 @@ class Settings(BaseSettings):
     OPENEVAL_API_KEY: str
     OPENEVAL_TASK_ID: int
 
+    SIMULATION: bool = False
+
 
 settings = Settings()
 
